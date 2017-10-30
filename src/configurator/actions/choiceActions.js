@@ -23,6 +23,7 @@ export function updateChoice(optionId, choiceId, choiceValue) {
     window.sessionStorage.setItem('lastChoice', choiceValue);
     return (dispatch, getState) => {
         let options = getState().configurator.options;
+        
         let selections = getState().configurator.choices
             .filter(function (item) { return item.isSelected && item.optionId !== optionId; })
             .map(function (item) {
@@ -35,45 +36,47 @@ export function updateChoice(optionId, choiceId, choiceValue) {
             });
 
         let option = getState().configurator.options.find(o => o.id === optionId);
-                selections.push({
-                    optionId: optionId,
-                    choiceId: choiceId,
-                    value: choiceValue,
-                    optionTags: option.tags
-                });
+
+        selections.push({
+            optionId: optionId,
+            choiceId: choiceId,
+            value: choiceValue,
+            optionTags: option.tags
+        });
         
-                window.console.log("Choice updated: [" + (option ? option.shortLabel : "no option found") + " " + optionId + "|" + choiceId + "|" + choiceValue + "|" + option.tags.join(',') + "]");
+        window.console.log("Choice updated: [" + (option ? option.shortLabel : "no option found") + " " + optionId + "|" + choiceId + "|" + choiceValue + "|" + option.tags.join(',') + "]");
 
-                dispatch(updateChoiceSuccess({}, optionId, choiceId, choiceValue));
+        dispatch(updateChoiceSuccess({}, optionId, choiceId, choiceValue));
 
-                document.dispatchEvent(new CustomEvent('price_changing'));
+        // TODO: Still need to wiring up pricing at some point.
+        // document.dispatchEvent(new CustomEvent('price_changing'));
 
-                setTimeout(function () {
-                if (window.sessionStorage.getItem('lastChoice') == choiceValue) {
-                    getState().templates.getPricing(getState().settings, selections)
-                        .then(response => {
-                            dispatch(updateConfiguratorSuccess(response.data));
-                            db.choices.put({
-                                url: window.location.pathname,
-                                choices: getState().configurator.choices
-                            });
-                            if (window.sessionStorage.getItem('lastChoice') == choiceValue) {
-                                document.dispatchEvent(new CustomEvent('price_changed', {
-                                    detail: {
-                                        price: response.data.price
-                                    }
-                                }));
-                            }
+        // setTimeout(function () {
+        // if (window.sessionStorage.getItem('lastChoice') == choiceValue) {
+        //     getState().templates.getPricing(getState().settings, selections)
+        //         .then(response => {
+        //             dispatch(updateConfiguratorSuccess(response.data));
+        //             db.choices.put({
+        //                 url: window.location.pathname,
+        //                 choices: getState().configurator.choices
+        //             });
+        //             if (window.sessionStorage.getItem('lastChoice') == choiceValue) {
+        //                 document.dispatchEvent(new CustomEvent('price_changed', {
+        //                     detail: {
+        //                         price: response.data.price
+        //                     }
+        //                 }));
+        //             }
 
-                        }).catch(error => {
-                            console.log(error);
-                            db.choices.put({
-                                url: window.location.pathname,
-                                choices: getState().configurator.choices
-                            });
-                        });
-                }
-                }, 300);   
+        //         }).catch(error => {
+        //             console.log(error);
+        //             db.choices.put({
+        //                 url: window.location.pathname,
+        //                 choices: getState().configurator.choices
+        //             });
+        //         });
+        // }
+        // }, 300);
         };
     }
 

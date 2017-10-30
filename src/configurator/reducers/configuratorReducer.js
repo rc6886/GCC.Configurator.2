@@ -15,7 +15,8 @@ export default function configuratorReducer(state = { groups: [] }, action) {
       configurator.groups = action.groups.map(function (g) {
         return {
           name: g.name,
-          sequenceNumber: g.sequenceNumber
+          sequenceNumber: g.sequenceNumber,
+          options: g.options.map(option => option.id),
         };
       });
 
@@ -27,10 +28,11 @@ export default function configuratorReducer(state = { groups: [] }, action) {
         };
       }).reduce(function (o, g) {
         return o.concat(g.options.map(function (item) {
-          let option = Object.assign({}, item, { groupName: g.groupName, groupSequence: g.sequenceNumber });
-
-          option.choices = null;
-
+          let option = Object.assign({}, item, {
+            groupName: g.groupName,
+            groupSequence: g.sequenceNumber,
+            choices: item.choices,
+          });
           return option;
         }));
       }, []);
@@ -71,7 +73,10 @@ function mapUpdatedChoice(choices, optionId, choiceId, choiceValue) {
   let choicesForOption = choices.filter(function (item) {
     return item.optionId === optionId;
   }).map(function (item) {
-    if (item.id === choiceId) {
+    if (item.isSelected) {
+      return Object.assign({}, item, { isSelected: false, value: '' });
+    }
+    else if (item.id === choiceId) {
       return Object.assign({}, item, { isSelected: item.id === choiceId, value: choiceValue });
     } else {
       return Object.assign({}, item, { isSelected: item.id === choiceId });

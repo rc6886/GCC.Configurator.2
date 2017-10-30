@@ -3,7 +3,7 @@ import React from 'react';
 const UngroupedOptionGroup = (props) => {
   return (
     <div>
-      <p>Ungrouped Option Group</p>
+      <h1>Ungrouped Option Group</h1>
       {props.children}
     </div>
   );
@@ -12,7 +12,7 @@ const UngroupedOptionGroup = (props) => {
 const SizeOptionGroup = (props) => {
   return (
     <div>
-      <p>Size Option Group</p>
+      <h1>Size Option Group</h1>
       {props.children}
     </div>
   );
