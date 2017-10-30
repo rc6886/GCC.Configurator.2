@@ -1,5 +1,6 @@
 import * as types from './actionTypes';
-import axios from 'axios';
+// import axios from 'axios';
+import { getOptions } from '../api/optionsApi';
 import * as choiceActions from './choiceActions';
 import db from './../localstorage/dexieDB';
 
@@ -49,14 +50,7 @@ export function loadOptions() {
   return (dispatch, getState) => {
     const settings = getState().settings;
 
-    return axios({
-      url: settings.getOptionsApi,
-      method: 'GET',
-      crossDomain: true,
-      headers: {
-        'Content-Type': "application/json"
-      }
-    }).then(response => {
+    return getOptions(settings.getOptionsApi, (data) => {
       db.choices.get(window.location.pathname,function(res){
         let userDefaults = [];
         if(res){
@@ -64,9 +58,8 @@ export function loadOptions() {
             userDefaults[choice.internalName] = {isSelected:choice.isSelected,value:choice.value};
           });
         }
-        dispatch(loadOptionsSuccess(response.data,userDefaults));
-        //dispatch(updatePrice());
+        dispatch(loadOptionsSuccess(data, userDefaults));
       });
     });
-  };
+  }
 }
