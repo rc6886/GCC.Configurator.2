@@ -18,7 +18,7 @@ class NullTemplate extends React.Component {
             <div key={index}
               onClick={() => this.props.onChoiceSelected(choice.optionId, choice.id, choice.shortLabel)}
             >
-              <img src={`http://eleanor.localtest.me/${choice.mediaUrl}`}></img>
+              <img src={`${choice.mediaUrl}`}></img>
               <ChoiceLabel choiceLabel={choice.shortLabel} isSelected={choice.isSelected} />
             </div>
           );
